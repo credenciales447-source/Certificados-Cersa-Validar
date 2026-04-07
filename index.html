@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validación de Certificados</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        iframe {
+            pointer-events: auto;
+            min-height: 500px;
+        }
+        .pdf-container {
+            position: relative;
+        }
+        .hidden-view {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="min-h-screen bg-gradient-to-t from-blue-900 via-blue-200 to-white py-12 px-4 sm:px-8 flex justify-center items-center">
+        
+        <!-- ==================== VISTA ESTÁTICA (certificado inicial) ==================== -->
+        <div id="staticCertificateView" class="w-full max-w-4xl bg-white shadow-xl rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-t from-blue-900 to-blue-800 text-white p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <img src="https://crts.cersa.org.pe/assets/logo.png" alt="Logo" class="h-10 w-10 object-contain rounded-md p-1" />
+                        <h1 class="text-xl font-bold">Certificado Validado</h1>
+                    </div>
+                    <button id="btnNuevaConsultaStatic" class="bg-white text-blue-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition">Nueva Consulta</button>
+                </div>
+            </div>
+
+            <div class="p-6 sm:p-8 space-y-8">
+                <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-600 rounded-full p-2 mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-semibold text-blue-700">Certificado Válido</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <p class="font-medium text-gray-600 mb-1">DOCUMENTO DE IDENTIDAD</p>
+                            <p class="text-gray-900 font-bold">70004018</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <p class="font-medium text-gray-600 mb-1">NOMBRE COMPLETO</p>
+                            <p class="text-gray-900 font-bold">RIKY MAGIVER QUISPE CANDIA</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <p class="font-medium text-gray-600 mb-1">CÓDIGO DE CERTIFICADO</p>
+                            <p class="text-gray-900 font-bold">CCCES-2508-7600-156</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <p class="font-medium text-gray-600 mb-1">FECHA DE EMISIÓN</p>
+                            <p class="text-gray-900 font-bold">31-07-2025</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PDF Preview estático -->
+                <div>
+                    <h3 class="text-base font-medium text-gray-700 mb-3 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Vista previa del certificado:
+                    </h3>
+                    <div class="rounded-lg overflow-hidden border border-gray-200 pdf-container">
+                        <iframe class="w-full min-h-[500px] sm:min-h-[600px]" style="pointer-events: auto" frameborder="0" src="https://drive.google.com/file/d/1pTontdqweD4vRTJyb0GE77yA05kcU_Fj/preview"></iframe>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 italic">* Este documento es solo para visualización. Para obtener una copia oficial, contacte a la institución emisora.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== VISTA DE BÚSQUEDA ==================== -->
+        <div id="searchView" class="w-full max-w-md bg-white shadow-xl rounded-2xl p-6 sm:p-10 space-y-8 hidden-view">
+            <div class="flex flex-col items-center gap-4">
+                <img src="https://crts.cersa.org.pe/assets/logo.png" alt="Logo" class="h-16 w-16 object-contain bg-gradient-to-t from-blue-900 to-blue-800 rounded-md p-2" />
+                <h1 class="text-2xl font-bold text-blue-900 text-center">Plataforma de Validación de Certificados</h1>
+            </div>
+            <div class="space-y-6">
+                <input id="searchCode" type="text" value="" placeholder="Ingrese el código del certificado" class="w-full px-4 py-3 rounded-xl text-center border border-blue-800 focus:ring-2 focus:ring-blue-700 outline-none text-sm text-blue-900" />
+                <button id="searchBtn" class="w-full bg-blue-800 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium text-sm shadow-md transition">Buscar Certificado</button>
+            </div>
+            <div id="loading" class="flex justify-center items-center space-x-2 hidden-view">
+                <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-800"></div>
+                <span class="text-blue-800 text-sm">Buscando certificado...</span>
+            </div>
+            <div id="errorMsg" class="text-red-600 text-sm text-center hidden-view"></div>
+        </div>
+
+        <!-- ==================== VISTA DE RESULTADO DINÁMICO ==================== -->
+        <div id="dynamicCertificateView" class="w-full max-w-4xl bg-white shadow-xl rounded-2xl overflow-hidden hidden-view">
+            <div class="bg-gradient-to-t from-blue-900 to-blue-800 text-white p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <img src="https://crts.cersa.org.pe/assets/logo.png" alt="Logo" class="h-10 w-10 object-contain rounded-md p-1" />
+                        <h1 class="text-xl font-bold">Certificado Validado</h1>
+                    </div>
+                    <button id="newQueryBtn" class="bg-white text-blue-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition">Nueva Consulta</button>
+                </div>
+            </div>
+
+            <div class="p-6 sm:p-8 space-y-8">
+                <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-600 rounded-full p-2 mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-semibold text-blue-700">Certificado Válido</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <p class="font-medium text-gray-600 mb-1">DOCUMENTO DE IDENTIDAD</p>
+                            <p id="displayDni" class="text-gray-900 font-bold"></p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <p class="font-medium text-gray-600 mb-1">NOMBRE COMPLETO</p>
+                            <p id="displayNombre" class="text-gray-900 font-bold"></p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <p class="font-medium text-gray-600 mb-1">CÓDIGO DE CERTIFICADO</p>
+                            <p id="displayCodigo" class="text-gray-900 font-bold"></p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <p class="font-medium text-gray-600 mb-1">FECHA DE EMISIÓN</p>
+                            <p id="displayFecha" class="text-gray-900 font-bold"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PDF Preview dinámico -->
+                <div>
+                    <h3 class="text-base font-medium text-gray-700 mb-3 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Vista previa del certificado:
+                    </h3>
+                    <div class="rounded-lg overflow-hidden border border-gray-200 pdf-container">
+                        <iframe id="pdfFrame" class="w-full min-h-[500px] sm:min-h-[600px]" style="pointer-events: auto" frameborder="0"></iframe>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 italic">* Este documento es solo para visualización. Para obtener una copia oficial, contacte a la institución emisora.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== BASE DE DATOS DE CERTIFICADOS ====================
+        // Agrega aquí todos los códigos que quieras que sean válidos
+        const certificadosDB = {
+            // Certificado original de Riky Magiver
+            "CCCES-2508-7600-156": {
+                dni: "70004018",
+                nombre: "RIKY MAGIVER QUISPE CANDIA",
+                codigo: "CCCES-2508-7600-156",
+                fecha: "31-07-2025",
+                pdfUrl: "https://drive.google.com/file/d/1pTontdqweD4vRTJyb0GE77yA05kcU_Fj/preview"
+            }
+            // Certificado original de Riky Magiver
+            // Puedes seguir agregando más certificados con la misma estructura
+        };
+
+        // Elementos de las vistas
+        const staticView = document.getElementById('staticCertificateView');
+        const searchView = document.getElementById('searchView');
+        const dynamicView = document.getElementById('dynamicCertificateView');
+
+        // Elementos de búsqueda
+        const searchCodeInput = document.getElementById('searchCode');
+        const searchBtn = document.getElementById('searchBtn');
+        const loadingDiv = document.getElementById('loading');
+        const errorMsgDiv = document.getElementById('errorMsg');
+        const newQueryBtn = document.getElementById('newQueryBtn');
+        const btnNuevaConsultaStatic = document.getElementById('btnNuevaConsultaStatic');
+
+        // Elementos de visualización dinámica
+        const displayDni = document.getElementById('displayDni');
+        const displayNombre = document.getElementById('displayNombre');
+        const displayCodigo = document.getElementById('displayCodigo');
+        const displayFecha = document.getElementById('displayFecha');
+        const pdfFrame = document.getElementById('pdfFrame');
+
+        // Mostrar la vista estática al inicio
+        staticView.classList.remove('hidden-view');
+        searchView.classList.add('hidden-view');
+        dynamicView.classList.add('hidden-view');
+
+        // Función para mostrar el certificado dinámico
+        function mostrarCertificado(codigo) {
+            const datos = certificadosDB[codigo];
+            if (!datos) {
+                errorMsgDiv.innerText = '❌ Código no encontrado. Verifique e intente nuevamente.';
+                errorMsgDiv.classList.remove('hidden-view');
+                return false;
+            }
+            errorMsgDiv.classList.add('hidden-view');
+            displayDni.innerText = datos.dni;
+            displayNombre.innerText = datos.nombre;
+            displayCodigo.innerText = datos.codigo;
+            displayFecha.innerText = datos.fecha;
+            pdfFrame.src = datos.pdfUrl;
+            return true;
+        }
+
+        function buscarCertificado() {
+            const codigo = searchCodeInput.value.trim();
+            if (codigo === "") {
+                errorMsgDiv.innerText = '⚠️ Ingrese un código de certificado.';
+                errorMsgDiv.classList.remove('hidden-view');
+                return;
+            }
+            loadingDiv.style.display = 'flex';
+            errorMsgDiv.classList.add('hidden-view');
+            setTimeout(() => {
+                const exito = mostrarCertificado(codigo);
+                loadingDiv.style.display = 'none';
+                if (exito) {
+                    searchView.classList.add('hidden-view');
+                    dynamicView.classList.remove('hidden-view');
+                }
+            }, 500);
+        }
+
+        function nuevaConsulta() {
+            // Volver a la vista de búsqueda (desde la vista dinámica)
+            dynamicView.classList.add('hidden-view');
+            searchView.classList.remove('hidden-view');
+            searchCodeInput.value = '';
+            errorMsgDiv.classList.add('hidden-view');
+        }
+
+        function nuevaConsultaDesdeStatic() {
+            // Desde la vista estática, mostrar el buscador
+            staticView.classList.add('hidden-view');
+            searchView.classList.remove('hidden-view');
+            searchCodeInput.value = '';
+            errorMsgDiv.classList.add('hidden-view');
+        }
+
+        // Event listeners
+        searchBtn.addEventListener('click', buscarCertificado);
+        newQueryBtn.addEventListener('click', nuevaConsulta);
+        btnNuevaConsultaStatic.addEventListener('click', nuevaConsultaDesdeStatic);
+        searchCodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') buscarCertificado();
+        });
+
+        // Protecciones contra descargas (opcional)
+        document.addEventListener('contextmenu', function(e) {
+            const iframes = document.querySelectorAll('iframe');
+            for (let iframe of iframes) {
+                if (iframe && (iframe.contains(e.target) || e.target === iframe)) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 's' || e.key === 'p')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
